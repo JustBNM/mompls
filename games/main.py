@@ -7,18 +7,16 @@ WHITE = (255, 255, 255)
 keys = pygame.key.get_pressed()
 
 
-
 class Hero (pygame.sprite.Sprite):
     def __init__(self, x, y, filename):
         self.x = x
         self.y = y
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(filename).convert()
-        #прячем фон белого цвета
+        # прячем фон белого цвета
         self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = 3
-
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -36,8 +34,6 @@ class Hero (pygame.sprite.Sprite):
                         self.rect.y += 2
             if keys[pygame.K_DOWN] == 0 and keys[pygame.K_UP] == 0 and  self.rect.x > 0:
                     self.rect.x -= 3
-
-
 
         if keys[pygame.K_RIGHT] == 1:
             if keys[pygame.K_UP] == 1:
@@ -74,7 +70,6 @@ class Hero (pygame.sprite.Sprite):
                 self.rect_bullet.y += self.strike_speed
 
 
-
 class Bullet (Hero):
     def __init__(self, x, y, filename):
         pygame.sprite.Sprite.__init__(self)
@@ -83,9 +78,11 @@ class Bullet (Hero):
         self.image.set_colorkey((255, 255, 255))
         self.rect_bullet = self.image.get_rect(center=(x, y))
         self.strike_speed = 5
+
     def move(self):
         if self.rect_bullet.y > 0:
             self.rect_bullet.y -= self.strike_speed
+
 
 sc = pygame.display.set_mode((W, H))
 
