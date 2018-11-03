@@ -102,6 +102,8 @@ background_surf = pygame.image.load('field.png').convert()
 background_rect = background_surf.get_rect(topleft=(0, 0))
 sc.blit(background_surf, background_rect)
 
+BULLETS_SURF = []
+
 
 hero1 = Hero(W/2, H/2, 'hero.png')
 
