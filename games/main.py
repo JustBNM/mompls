@@ -23,42 +23,42 @@ class Hero (pygame.sprite.Sprite):
 
         if keys[pygame.K_LEFT]:
             if keys[pygame.K_UP]:
-                    if self.rect.x > 0:
+                    if self.rect.x > 90:
                         self.rect.x -= 2
                         self.x = self.rect.x
-                    if self.rect.y > 0:
+                    if self.rect.y > 90:
                         self.rect.y -= 2
                         self.y = self.rect.y
             if keys[pygame.K_DOWN] :
-                    if self.rect.x > 0:
+                    if self.rect.x > 90:
                         self.rect.x -= 2
                         self.x = self.rect.x
                     if self.rect.y < H-190:
                         self.rect.y += 2
                         self.y = self.rect.y
-            if keys[pygame.K_DOWN] == 0 and keys[pygame.K_UP] == 0 and  self.rect.x > 0:
+            if keys[pygame.K_DOWN] == 0 and keys[pygame.K_UP] == 0 and  self.rect.x > 90:
                 self.rect.x -= 3
                 self.x = self.rect.x
 
         if keys[pygame.K_RIGHT] == 1:
             if keys[pygame.K_UP] == 1:
-                if self.rect.x < W:
+                if self.rect.x < W -190:
                     self.rect.x += 2
                     self.x = self.rect.x
-                if self.rect.y > 0:
+                if self.rect.y > 90:
                     self.rect.y -= 2
                     self.y = self.rect.y
             if keys[pygame.K_DOWN] == 1:
-                if self.rect.x < W:
+                if self.rect.x < W- 190:
                     self.rect.x += 2
                     self.x = self.rect.x
                 if self.rect.y < H-190:
                     self.rect.y += 2
                     self.y = self.rect.y
-            if keys[pygame.K_DOWN] == 0 and keys[pygame.K_UP] == 0 and  self.rect.x < W:
+            if keys[pygame.K_DOWN] == 0 and keys[pygame.K_UP] == 0 and  self.rect.x < W -190:
                 self.rect.x += 3
                 self.x = self.rect.x
-        if keys[pygame.K_UP] and keys[pygame.K_LEFT] == 0 and keys[pygame.K_RIGHT] == 0 and self.rect.y >0:
+        if keys[pygame.K_UP] and keys[pygame.K_LEFT] == 0 and keys[pygame.K_RIGHT] == 0 and self.rect.y >90:
             self.rect.y -= 3
             self.y = self.rect.y
         if keys[pygame.K_DOWN] and keys[pygame.K_LEFT] == 0 and keys[pygame.K_RIGHT] == 0 and self.rect.y < H-190:
