@@ -93,7 +93,7 @@ sc.blit(background_surf, background_rect)
 
 hero1 = Hero(W/2, H/2, 'hero.png')
 
-bullet1 = Bullet(W/2, H/2, 'pop.image.png')
+bullet1 = Bullet(hero1.x, hero1.y, 'pop.image.png')
 
 
 while 1:
