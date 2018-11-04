@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 pygame.init()
 W = 1072
 H = 634
@@ -29,7 +30,7 @@ class Hero (pygame.sprite.Sprite):
                     if self.rect.y > 90:
                         self.rect.y -= 2
                         self.y = self.rect.y
-            if keys[pygame.K_DOWN] :
+            if keys[pygame.K_DOWN]:
                     if self.rect.x > 90:
                         self.rect.x -= 2
                         self.x = self.rect.x
@@ -104,6 +105,7 @@ class Bullet (Hero):
             self.kill()
             global MOVE_W
             MOVE_W = False
+
     def move_s(self):
         if self.rect_bullet.y < H-90:
             self.rect_bullet.y += self.strike_speed
@@ -111,6 +113,7 @@ class Bullet (Hero):
             self.kill()
             global MOVE_S
             MOVE_S = False
+
     def move_a(self):
         if self.rect_bullet.x > 90:
             self.rect_bullet.x -= self.strike_speed
@@ -131,8 +134,31 @@ class Bullet (Hero):
 class Monsters (Hero):
     def __init__(self, x, y, filename):
         pygame.sprite.Sprite.__init__(self)
-
-
+        self.image = pygame.image.load(filename).convert()
+        # прячем фон белого цвета
+        self.image.set_colorkey((255, 255, 255))
+        self.rect_monster = self.image.get_rect(center=(x, y))
+        self.speed = 2
+        self.x = self.rect_monster.x
+        self.y = self.rect_monster.y
+    def move(self, x, y):
+        if self.rect_monster.x < hero1.x:
+            self.rect_monster.x += self.speed
+            if self.rect_monster.y < hero1.y:
+                self.rect_monster.y += hero1.y
+            if self.rect_monster.y > hero1.y:
+                self.rect_monster.y -= self.speed
+        elif self.rect_monster.x > hero1.x:
+            self.rect_monster.x -= self.speed
+            if self.rect_monster.y < hero1.y:
+                self.rect_monster.y += hero1.y
+            if self.rect_monster.y > hero1.y:
+                self.rect_monster.y -= self.speed
+        elif self.rect_monster.x == hero1.x:
+            if self.rect_monster.y < hero1.y:
+                self.rect_monster.y += hero1.y
+            if self.rect_monster.y > hero1.y:
+                self.rect_monster.y -= self.speed
 
 sc = pygame.display.set_mode((W, H))
 
@@ -144,6 +170,8 @@ BULLETS_SURF = []
 
 
 hero1 = Hero(W/2, H/2, 'hero.png')
+
+monster1 = Monsters(randint(1,W-90), 90, 'monster1.png')
 
 bullet1 = Bullet(hero1.x, hero1.y, 'pop.image.png')
 
@@ -166,9 +194,9 @@ while 1:
         bullet1 = Bullet(hero1.x, hero1.y, 'pop.image.png')
         MOVE_A = True
     if keys[pygame.K_d]:
-
         bullet1 = Bullet(hero1.x, hero1.y, 'pop.image.png')
         MOVE_D = True
+
     if MOVE_W == True:
         bullet1.move_w()
     if MOVE_S == True:
@@ -178,11 +206,13 @@ while 1:
     if MOVE_D == True:
         bullet1.move_d()
 
-    sc.blit(bullet1.image, bullet1.rect_bullet )
+    sc.blit(bullet1.image, bullet1.rect_bullet)
+    sc.blit(monster1.image, monster1.rect_monster)
     pygame.display.update()
     pygame.time.delay(20)
 
     hero1.update(W/2, H/2)
 
+    monster1.move(monster1.x, monster1.y)
     print(hero1.x, hero1.y)
 
