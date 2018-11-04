@@ -7,6 +7,12 @@ WHITE = (255, 255, 255)
 
 keys = pygame.key.get_pressed()
 
+pygame.mixer.music.load('Snake Eyes.mp3')
+pygame.mixer.music.play()
+
+sound1 = pygame.mixer.Sound('frog.wav')
+sound2 = pygame.mixer.Sound('Грустный тромбон.ogg')
+
 
 class Hero (pygame.sprite.Sprite):
     def __init__(self, x, y, filename, hp):
@@ -192,6 +198,24 @@ while 1:
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             exit()
+        elif i.type == pygame.KEYUP:
+            if i.key == pygame.K_1:
+                pygame.mixer.music.pause()
+                #в этом случае музыка будет начинаться сначала
+                # pygame.mixer.music.stop()
+            elif i.key == pygame.K_2:
+                pygame.mixer.music.unpause()
+                # pygame.mixer.music.play()
+                pygame.mixer.music.set_volume(0.5)
+            elif i.key == pygame.K_3:
+                pygame.mixer.music.unpause()
+                # pygame.mixer.music.play()
+                pygame.mixer.music.set_volume(1)
+        elif i.type == pygame.MOUSEBUTTONUP:
+            if i.button == 1:
+                sound1.play()
+            elif i.button == 3:
+                sound2.play()
     keys = pygame.key.get_pressed()
 
     sc.blit(background_surf, background_rect)
