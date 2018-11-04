@@ -9,7 +9,7 @@ keys = pygame.key.get_pressed()
 
 
 class Hero (pygame.sprite.Sprite):
-    def __init__(self, x, y, filename):
+    def __init__(self, x, y, filename, hp):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(filename).convert()
         # прячем фон белого цвета
@@ -18,6 +18,7 @@ class Hero (pygame.sprite.Sprite):
         self.speed = 3
         self.x = self.rect.x
         self.y = self.rect.y
+        self.hp = hp
 
     def update(self, x, y):
         keys = pygame.key.get_pressed()
@@ -138,27 +139,38 @@ class Monsters (Hero):
         # прячем фон белого цвета
         self.image.set_colorkey((255, 255, 255))
         self.rect_monster = self.image.get_rect(center=(x, y))
-        self.speed = 2
+        self.speed = 1
         self.x = self.rect_monster.x
         self.y = self.rect_monster.y
-    def move(self, x, y):
+
+    def move(self):
         if self.rect_monster.x < hero1.x:
             self.rect_monster.x += self.speed
+            self.x = self.rect_monster.x
             if self.rect_monster.y < hero1.y:
                 self.rect_monster.y += hero1.y
+                self.y = self.rect_monster.y
             if self.rect_monster.y > hero1.y:
                 self.rect_monster.y -= self.speed
+                self.y = self.rect_monster.y
         elif self.rect_monster.x > hero1.x:
             self.rect_monster.x -= self.speed
+            self.x = self.rect_monster.x
             if self.rect_monster.y < hero1.y:
                 self.rect_monster.y += hero1.y
+                self.y = self.rect_monster.y
             if self.rect_monster.y > hero1.y:
                 self.rect_monster.y -= self.speed
+                self.y = self.rect_monster.y
         elif self.rect_monster.x == hero1.x:
             if self.rect_monster.y < hero1.y:
                 self.rect_monster.y += hero1.y
+                self.y = self.rect_monster.y
             if self.rect_monster.y > hero1.y:
                 self.rect_monster.y -= self.speed
+                self.y = self.rect_monster.y
+    def attack(self):
+        hero1.hp -= 1
 
 sc = pygame.display.set_mode((W, H))
 
@@ -169,7 +181,7 @@ sc.blit(background_surf, background_rect)
 BULLETS_SURF = []
 
 
-hero1 = Hero(W/2, H/2, 'hero.png')
+hero1 = Hero(W/2, H/2, 'hero.png', 100)
 
 monster1 = Monsters(randint(1,W-90), 90, 'monster1.png')
 
@@ -213,6 +225,10 @@ while 1:
 
     hero1.update(W/2, H/2)
 
-    monster1.move(monster1.x, monster1.y)
+    monster1.move()
+    if monster1.x == hero1.x and monster1.y == hero1.y:
+        monster1.attack()
     print(hero1.x, hero1.y)
+    print(monster1.x, monster1.y)
+    print(hero1.hp)
 
