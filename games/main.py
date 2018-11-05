@@ -11,6 +11,7 @@ keys = pygame.key.get_pressed()
 MUSIC = ('Muse-Undisclosed Desires.mp3', 'Muse-Uprising.mp3', 'Snake Eyes.mp3', 'Shinedown-Cut The Cord.mp3',
          'The Killers-Somebody Told Me.mp3', 'Three Days Grace-Now or Never.mp3', 'Lethal Injektion-Place for My Head.mp3')
 random.shuffle([MUSIC])
+#TODO: Прописать, чтобы можно было листать музыку клавишей.
 for i in MUSIC:
     pygame.mixer.music.load(i)
 pygame.mixer.music.play()
