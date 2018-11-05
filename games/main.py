@@ -1,13 +1,18 @@
 import pygame
+import random
 from random import randint
+
 pygame.init()
 W = 1072
 H = 634
 WHITE = (255, 255, 255)
 
 keys = pygame.key.get_pressed()
-
-pygame.mixer.music.load('Snake Eyes.mp3')
+MUSIC = ('Muse-Undisclosed Desires.mp3', 'Muse-Uprising.mp3', 'Snake Eyes.mp3', 'Shinedown-Cut The Cord.mp3',
+         'The Killers-Somebody Told Me.mp3', 'Three Days Grace-Now or Never.mp3', 'Lethal Injektion-Place for My Head.mp3')
+random.shuffle([MUSIC])
+for i in MUSIC:
+    pygame.mixer.music.load(i)
 pygame.mixer.music.play()
 
 sound1 = pygame.mixer.Sound('frog.wav')
