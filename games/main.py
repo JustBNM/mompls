@@ -8,13 +8,11 @@ H = 634
 WHITE = (255, 255, 255)
 
 keys = pygame.key.get_pressed()
-MUSIC = ('Muse-Undisclosed Desires.mp3', 'Muse-Uprising.mp3', 'Snake Eyes.mp3', 'Shinedown-Cut The Cord.mp3',
-         'The Killers-Somebody Told Me.mp3', 'Three Days Grace-Now or Never.mp3', 'Lethal Injektion-Place for My Head.mp3')
+MUSIC = ('background_music.mp3')
 random.shuffle([MUSIC])
 #TODO: Прописать, чтобы можно было листать музыку клавишей.
-for i in MUSIC:
-    pygame.mixer.music.load(i)
-pygame.mixer.music.play()
+pygame.mixer.music.load(MUSIC)
+pygame.mixer.music.play(-1)
 
 sound1 = pygame.mixer.Sound('frog.wav')
 sound2 = pygame.mixer.Sound('Грустный тромбон.ogg')
@@ -79,7 +77,7 @@ class Hero (pygame.sprite.Sprite):
             self.rect.y += 3
             self.y = self.rect.y
 
-    def strike(self):
+    '''def strike(self):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_w]:
@@ -93,8 +91,7 @@ class Hero (pygame.sprite.Sprite):
                 self.rect_bullet.x -= self.strike_speed
         if keys[pygame.K_d]:
             if self.rect_bullet.x < W:
-                self.rect_bullet.x += self.strike_speed
-
+                self.rect_bullet.x += self.strike_speed'''
 
 MOVE_W = False
 MOVE_S = False
@@ -111,10 +108,14 @@ class Bullet (Hero):
         self.rect_bullet = self.image.get_rect(center=(x, y))
         self.strike_speed = 5
 
+    def update(self, x, y):
+        self.rect_bullet.y == hero1.y
+        self.rect_bullet.x == hero1.x
+
     def move_w(self):
         if self.rect_bullet.y > 90:
             self.rect_bullet.y -= self.strike_speed
-        else:
+        if self.rect_bullet.y <= 90 or keys[pygame.K_d] or keys[pygame.K_a] or keys[pygame.K_s]:
             self.kill()
             global MOVE_W
             MOVE_W = False
@@ -122,7 +123,7 @@ class Bullet (Hero):
     def move_s(self):
         if self.rect_bullet.y < H-90:
             self.rect_bullet.y += self.strike_speed
-        else:
+        if self.rect_bullet.y >= H-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_d]:
             self.kill()
             global MOVE_S
             MOVE_S = False
@@ -130,7 +131,7 @@ class Bullet (Hero):
     def move_a(self):
         if self.rect_bullet.x > 90:
             self.rect_bullet.x -= self.strike_speed
-        else:
+        if self.rect_bullet.x <= 90 or keys[pygame.K_w] or keys[pygame.K_d] or keys[pygame.K_s]:
             self.kill()
             global MOVE_A
             MOVE_A = False
@@ -138,7 +139,7 @@ class Bullet (Hero):
     def move_d(self):
         if self.rect_bullet.x < W-90:
             self.rect_bullet.x += self.strike_speed
-        else:
+        if self.rect_bullet.x >= W-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_s]:
             self.kill()
             global MOVE_D
             MOVE_D = False
@@ -160,23 +161,25 @@ class Monsters (Hero):
             self.rect_monster.x += self.speed
             self.x = self.rect_monster.x
             if self.rect_monster.y < hero1.y:
-                self.rect_monster.y += hero1.y
+                self.rect_monster.y += self.speed
                 self.y = self.rect_monster.y
             if self.rect_monster.y > hero1.y:
                 self.rect_monster.y -= self.speed
                 self.y = self.rect_monster.y
+
         elif self.rect_monster.x > hero1.x:
             self.rect_monster.x -= self.speed
             self.x = self.rect_monster.x
             if self.rect_monster.y < hero1.y:
-                self.rect_monster.y += hero1.y
+                self.rect_monster.y += self.speed
                 self.y = self.rect_monster.y
             if self.rect_monster.y > hero1.y:
                 self.rect_monster.y -= self.speed
                 self.y = self.rect_monster.y
+
         elif self.rect_monster.x == hero1.x:
             if self.rect_monster.y < hero1.y:
-                self.rect_monster.y += hero1.y
+                self.rect_monster.y += self.speed
                 self.y = self.rect_monster.y
             if self.rect_monster.y > hero1.y:
                 self.rect_monster.y -= self.speed
@@ -258,7 +261,8 @@ while 1:
     monster1.move()
     if monster1.x == hero1.x and monster1.y == hero1.y:
         monster1.attack()
-    print(hero1.x, hero1.y)
+    '''print(hero1.x, hero1.y)
     print(monster1.x, monster1.y)
-    print(hero1.hp)
-
+    print(hero1.hp)'''
+    print (MOVE_W)
+    print (bullet1.rect_bullet.y)
