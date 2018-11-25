@@ -121,7 +121,7 @@ class Bullet (Hero):
             self.kill()
             global MOVE_W
             MOVE_W = False
-        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                 and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
             self.kill()
             MOVE_W = False
@@ -134,7 +134,7 @@ class Bullet (Hero):
             self.kill()
             global MOVE_S
             MOVE_S = False
-        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                 and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
             self.kill()
             MOVE_S = False
@@ -146,7 +146,7 @@ class Bullet (Hero):
             self.kill()
             global MOVE_A
             MOVE_A = False
-        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                 and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
             self.kill()
             MOVE_A = False
@@ -159,7 +159,7 @@ class Bullet (Hero):
             self.kill()
             global MOVE_D
             MOVE_D = False
-        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                 and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
             self.kill()
             MOVE_D = False
@@ -207,7 +207,6 @@ class Monsters (Hero):
                 self.rect_monster.y -= self.speed
                 self.y = self.rect_monster.y
         if self.hp <= 0:
-            self.kill()
             global MONSTER_STATUS
             MONSTER_STATUS = False
     def attack(self):
@@ -256,10 +255,41 @@ HP_TEXT = HP_NAMESPACE.render ('HP: {}'.format(hero1.hp), 1, (180, 0,0))
 HP_PLACE = HP_TEXT.get_rect(center =(50, 20))
 sc.blit(HP_TEXT, HP_PLACE)
 
+HP_MONSTER_NAMESPACE = pygame.font.Font(None,13)
+HP_MONSTER_TEXT = HP_NAMESPACE.render ('{}/100'.format(hero1.hp), 1, (0, 100,0))
+HP_MONSTER_PLACE = HP_MONSTER_TEXT.get_rect(center =(monster1.x + 30, monster1.y - 10))
+sc.blit (HP_MONSTER_TEXT, HP_MONSTER_PLACE)
+
+MENU_STATUS = True
+surf1 = pygame.Surface((300, 100))
+surf1.fill((250, 250, 250))
+rect_1 = pygame.Rect((W/2-150, H/2 - 150, 0, 0))
+sc.blit(surf1, rect_1)
+
+MENU_NAMESPACE_1 = pygame.font.Font(None,70)
+MENU_TEXT_1 = MENU_NAMESPACE_1.render ('Hello, sir.', 1, (0, 0,0))
+MENU_PLACE_1 = MENU_TEXT_1.get_rect(center =(150, 50))
+sc.blit (MENU_TEXT_1,MENU_PLACE_1)
+
+surf2 = pygame.Surface((300, 100))
+surf2.fill((220, 200, 0))
+rect_2 = pygame.Rect((W/2-150, H/2 + 150, 0, 0))
+sc.blit(surf2, rect_2)
+
+MENU_NAMESPACE_2 = pygame.font.Font(None,80)
+MENU_TEXT_2 = MENU_NAMESPACE_2.render ('START', 1, (0, 0,0))
+MENU_PLACE_2 = MENU_TEXT_2.get_rect(center =(150, 50))
+sc.blit (MENU_TEXT_2,MENU_PLACE_2)
 while 1:
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             exit()
+        if MENU_STATUS == True:
+            if i.type == pygame.MOUSEBUTTONDOWN:
+                if i.button == 1 and i.pos[0] in range(int(W/2 - 150), int(W/2 + 150) ) \
+                        and i.pos[1] in range(int(H/2 + 150), int(H/2 + 250)):
+                    MENU_STATUS = False
+
         elif i.type == pygame.KEYUP:
             if i.key == pygame.K_1:
                 pygame.mixer.music.pause()
@@ -279,77 +309,92 @@ while 1:
             elif i.button == 3:
                 sound2.play()
     keys = pygame.key.get_pressed()
-
-    if hero1.hp >= 100:
+    if MENU_STATUS == True:
         sc.blit(background_surf, background_rect)
+        sc.blit(surf1, rect_1)
+        surf1.blit(MENU_TEXT_1, MENU_PLACE_1)
+        sc.blit(surf2, rect_2)
+        surf2.blit(MENU_TEXT_2, MENU_PLACE_2)
+        pygame.time.delay(40)
+        pygame.display.update()
+    if MENU_STATUS == False:
+        if hero1.hp >= 100:
+            sc.blit(background_surf, background_rect)
+            sc.blit(hero1.image, hero1.rect)
+        elif 75 < hero1.hp < 100 :
+            sc.blit(background_surf_1, background_rect_1)
+            sc.blit(hero1.image, hero1.rect)
+        elif 50 < hero1.hp <= 75:
+            sc.blit(background_surf_2, background_rect_2)
+            sc.blit(hero1.image, hero1.rect)
+        elif 30 < hero1.hp <= 50:
+            sc.blit(background_surf_3, background_rect_3)
+            sc.blit(hero1.image, hero1.rect)
+        elif 15 < hero1.hp <= 30:
+            sc.blit(background_surf_4, background_rect_4)
+            sc.blit(hero1.image, hero1.rect)
+        elif hero1.hp <= 15:
+            sc.blit(background_surf_5, background_rect_5)
+            sc.blit(hero1.image, hero1.rect)
         sc.blit(hero1.image, hero1.rect)
-    elif 75 < hero1.hp < 100 :
-        sc.blit(background_surf_1, background_rect_1)
-        sc.blit(hero1.image, hero1.rect)
-    elif 50 < hero1.hp <= 75:
-        sc.blit(background_surf_2, background_rect_2)
-        sc.blit(hero1.image, hero1.rect)
-    elif 30 < hero1.hp <= 50:
-        sc.blit(background_surf_3, background_rect_3)
-        sc.blit(hero1.image, hero1.rect)
-    elif 15 < hero1.hp <= 30:
-        sc.blit(background_surf_4, background_rect_4)
-        sc.blit(hero1.image, hero1.rect)
-    elif hero1.hp <= 15:
-        sc.blit(background_surf_5, background_rect_5)
-        sc.blit(hero1.image, hero1.rect)
-    sc.blit(hero1.image, hero1.rect)
-    if keys[pygame.K_w]:
-        bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
-        MOVE_W = True
-    if keys[pygame.K_s]:
-        bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
-        MOVE_S = True
-    if keys[pygame.K_a]:
-        bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
-        MOVE_A = True
-    if keys[pygame.K_d]:
-        bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
-        MOVE_D = True
+        if keys[pygame.K_w]:
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            MOVE_W = True
+        if keys[pygame.K_s]:
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            MOVE_S = True
+        if keys[pygame.K_a]:
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            MOVE_A = True
+        if keys[pygame.K_d]:
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            MOVE_D = True
 
-    if MOVE_W == True:
-        bullet1.move_w()
-    if MOVE_S == True:
-        bullet1.move_s()
-    if MOVE_A == True:
-        bullet1.move_a()
-    if MOVE_D == True:
-        bullet1.move_d()
+        if MOVE_W == True:
+            bullet1.move_w()
+        if MOVE_S == True:
+            bullet1.move_s()
+        if MOVE_A == True:
+            bullet1.move_a()
+        if MOVE_D == True:
+            bullet1.move_d()
 
-    if MOVE_W == False and MOVE_A == False and MOVE_S == False and MOVE_D == False:
-        bullet1.update(hero1.x + 45, hero1.y + 110)
+        if MOVE_W == False and MOVE_A == False and MOVE_S == False and MOVE_D == False:
+            bullet1.update(hero1.x + 45, hero1.y + 110)
 
-    if hero1.x in range(bullet2.rect_bullet.x - 90, bullet2.rect_bullet.x + 90)\
-    and hero1.y in range(bullet2.rect_bullet.y -120, bullet2.rect_bullet.y +20) :
-        BULLET_SKIN = 'pop.image.png'
-        FREE_BULLETS = False
+        if hero1.x in range(bullet2.rect_bullet.x - 90, bullet2.rect_bullet.x + 90)\
+        and hero1.y in range(bullet2.rect_bullet.y -120, bullet2.rect_bullet.y +20) :
+            BULLET_SKIN = 'pop.image.png'
+            FREE_BULLETS = False
 
-    sc.blit(bullet1.image, bullet1.rect_bullet)
-    HP_TEXT = HP_NAMESPACE.render('HP: {}'.format(hero1.hp), 1, (180, 0, 0))
-    sc.blit(HP_TEXT, HP_PLACE)
-    if FREE_BULLETS == True:
-        sc.blit(bullet2.image, bullet2.rect_bullet)
-    else:
-        bullet2 = Bullet(W-40, 40, 'pop.image.png')
-    if MONSTER_STATUS == True:
-        sc.blit(monster1.image, monster1.rect_monster)
+        sc.blit(bullet1.image, bullet1.rect_bullet)
+        HP_TEXT = HP_NAMESPACE.render('HP: {}'.format(hero1.hp), 1, (180, 0, 0))
+        sc.blit(HP_TEXT, HP_PLACE)
+        if MONSTER_STATUS == True:
+            HP_MONSTER_TEXT = HP_NAMESPACE.render('{}/100'.format(monster1.hp), 1, (0, 100, 0))
+            HP_MONSTER_PLACE = HP_MONSTER_TEXT.get_rect(center=(monster1.x + 30, monster1.y - 10))
+            sc.blit(HP_MONSTER_TEXT, HP_MONSTER_PLACE)
+        if MONSTER_STATUS == False and monster1 == True:
+            del monster1
+        if FREE_BULLETS == True:
+            sc.blit(bullet2.image, bullet2.rect_bullet)
+        else:
+            bullet2 = Bullet(W-40, 40, 'pop.image.png')
+        if MONSTER_STATUS == True:
+            sc.blit(monster1.image, monster1.rect_monster)
 
-    pygame.time.delay(40)
+        pygame.time.delay(40)
 
-    hero1.update(W/2, H/2)
-
-    monster1.move()
-    pygame.display.update()
-    if monster1.x in range (hero1.x - 30, hero1.x +30) and monster1.y in range (hero1.y-60, hero1.y +30):
-        monster1.attack()
-    '''print(hero1.x, hero1.y)
-    print(monster1.x, monster1.y)'''
-    print (MOVE_W)
-    print (bullet1.rect_bullet.y)
-    print (FREE_BULLETS)
-
+        hero1.update(W/2, H/2)
+        if MONSTER_STATUS == True:
+            monster1.move()
+        pygame.display.update()
+        if MONSTER_STATUS == True:
+            if monster1.x in range (hero1.x-30, hero1.x +70) and monster1.y in range (hero1.y - 60, hero1.y +80):
+                monster1.attack()
+        '''print(hero1.x, hero1.y)
+        print(monster1.x, monster1.y)'''
+        print (MOVE_W)
+        print (bullet1.rect_bullet.y)
+        print (FREE_BULLETS)
+        print (monster1)
