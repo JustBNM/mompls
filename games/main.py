@@ -117,42 +117,53 @@ class Bullet (Hero):
     def move_w(self):
         if self.rect_bullet.y > 90:
             self.rect_bullet.y -= self.strike_speed
-        if self.rect_bullet.y <= 90 or keys[pygame.K_d] or keys[pygame.K_a] or keys[pygame.K_s]\
-            or (self.rect_bullet.x in range (monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range (monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+        if self.rect_bullet.y <= 90 or keys[pygame.K_d] or keys[pygame.K_a] or keys[pygame.K_s]:
             self.kill()
             global MOVE_W
             MOVE_W = False
+        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+            self.kill()
+            MOVE_W = False
+            monster1.hp -= 25
 
     def move_s(self):
         if self.rect_bullet.y < H-90:
             self.rect_bullet.y += self.strike_speed
-        if self.rect_bullet.y >= H-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_d] \
-            or (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+        if self.rect_bullet.y >= H-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_d]:
             self.kill()
             global MOVE_S
             MOVE_S = False
-
+        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+            self.kill()
+            MOVE_S = False
+            monster1.hp -= 25
     def move_a(self):
         if self.rect_bullet.x > 90:
             self.rect_bullet.x -= self.strike_speed
-        if self.rect_bullet.x <= 90 or keys[pygame.K_w] or keys[pygame.K_d] or keys[pygame.K_s] \
-            or (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+        if self.rect_bullet.x <= 90 or keys[pygame.K_w] or keys[pygame.K_d] or keys[pygame.K_s]:
             self.kill()
             global MOVE_A
             MOVE_A = False
+        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+            self.kill()
+            MOVE_A = False
+            monster1.hp -= 25
 
     def move_d(self):
         if self.rect_bullet.x < W-90:
             self.rect_bullet.x += self.strike_speed
-        if self.rect_bullet.x >= W-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_s] \
-            or (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+        if self.rect_bullet.x >= W-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_s]:
             self.kill()
             global MOVE_D
             MOVE_D = False
+        if (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+            self.kill()
+            MOVE_D = False
+            monster1.hp -= 25
 
 
 class Monsters (Hero):
@@ -195,19 +206,42 @@ class Monsters (Hero):
             if self.rect_monster.y > hero1.y + 30:
                 self.rect_monster.y -= self.speed
                 self.y = self.rect_monster.y
+        if self.hp <= 0:
+            self.kill()
+            global MONSTER_STATUS
+            MONSTER_STATUS = False
     def attack(self):
         hero1.hp -= 1
 
-sc = pygame.display.set_mode((W, H))
-
-background_surf = pygame.image.load('field.png').convert()
-background_rect = background_surf.get_rect(topleft=(0, 0))
-sc.blit(background_surf, background_rect)
-
 FREE_BULLETS = True
+MONSTER_STATUS = True
 
 BULLETS_SURF = []
 BULLET_SKIN = 'circle-color.png'
+FIELD = ['field.png', 'field1.png','field2.png','field3.png','field4.png','field5.png']
+
+
+sc = pygame.display.set_mode((W, H))
+background_surf = pygame.image.load(FIELD[0]).convert()
+background_rect = background_surf.get_rect(topleft=(0, 0))
+
+background_surf_1 = pygame.image.load(FIELD[1]).convert()
+background_rect_1 = background_surf_1.get_rect(topleft=(0, 0))
+
+background_surf_2 = pygame.image.load(FIELD[2]).convert()
+background_rect_2 = background_surf_2.get_rect(topleft=(0, 0))
+
+background_surf_3 = pygame.image.load(FIELD[3]).convert()
+background_rect_3 = background_surf_3.get_rect(topleft=(0, 0))
+
+background_surf_4 = pygame.image.load(FIELD[4]).convert()
+background_rect_4 = background_surf_4.get_rect(topleft=(0, 0))
+
+background_surf_5 = pygame.image.load(FIELD[5]).convert()
+background_rect_5 = background_surf_5.get_rect(topleft=(0, 0))
+sc.blit(background_surf, background_rect)
+
+
 
 hero1 = Hero(W/2, H/2, 'hero.png', 100)
 
@@ -215,6 +249,12 @@ monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100)
 
 bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SKIN)
 bullet2 = Bullet (randint(90, W-90), randint(90, H-90), 'pop.image.png')
+
+
+HP_NAMESPACE = pygame.font.Font(None,30)
+HP_TEXT = HP_NAMESPACE.render ('HP: {}'.format(hero1.hp), 1, (180, 0,0))
+HP_PLACE = HP_TEXT.get_rect(center =(50, 20))
+sc.blit(HP_TEXT, HP_PLACE)
 
 while 1:
     for i in pygame.event.get():
@@ -240,7 +280,24 @@ while 1:
                 sound2.play()
     keys = pygame.key.get_pressed()
 
-    sc.blit(background_surf, background_rect)
+    if hero1.hp >= 100:
+        sc.blit(background_surf, background_rect)
+        sc.blit(hero1.image, hero1.rect)
+    elif 75 < hero1.hp < 100 :
+        sc.blit(background_surf_1, background_rect_1)
+        sc.blit(hero1.image, hero1.rect)
+    elif 50 < hero1.hp <= 75:
+        sc.blit(background_surf_2, background_rect_2)
+        sc.blit(hero1.image, hero1.rect)
+    elif 30 < hero1.hp <= 50:
+        sc.blit(background_surf_3, background_rect_3)
+        sc.blit(hero1.image, hero1.rect)
+    elif 15 < hero1.hp <= 30:
+        sc.blit(background_surf_4, background_rect_4)
+        sc.blit(hero1.image, hero1.rect)
+    elif hero1.hp <= 15:
+        sc.blit(background_surf_5, background_rect_5)
+        sc.blit(hero1.image, hero1.rect)
     sc.blit(hero1.image, hero1.rect)
     if keys[pygame.K_w]:
         bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
@@ -273,11 +330,14 @@ while 1:
         FREE_BULLETS = False
 
     sc.blit(bullet1.image, bullet1.rect_bullet)
+    HP_TEXT = HP_NAMESPACE.render('HP: {}'.format(hero1.hp), 1, (180, 0, 0))
+    sc.blit(HP_TEXT, HP_PLACE)
     if FREE_BULLETS == True:
         sc.blit(bullet2.image, bullet2.rect_bullet)
     else:
         bullet2 = Bullet(W-40, 40, 'pop.image.png')
-    sc.blit(monster1.image, monster1.rect_monster)
+    if MONSTER_STATUS == True:
+        sc.blit(monster1.image, monster1.rect_monster)
 
     pygame.time.delay(40)
 
@@ -285,11 +345,11 @@ while 1:
 
     monster1.move()
     pygame.display.update()
-    if monster1.x == hero1.x and monster1.y == hero1.y:
+    if monster1.x in range (hero1.x - 30, hero1.x +30) and monster1.y in range (hero1.y-60, hero1.y +30):
         monster1.attack()
     '''print(hero1.x, hero1.y)
-    print(monster1.x, monster1.y)
-    print(hero1.hp)'''
+    print(monster1.x, monster1.y)'''
     print (MOVE_W)
     print (bullet1.rect_bullet.y)
     print (FREE_BULLETS)
+
