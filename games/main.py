@@ -3,6 +3,7 @@ import random
 from random import randint
 
 pygame.init()
+#pygame.time.set_timer(pygame.USEREVENT, 10000)
 W = 1072
 H = 634
 WHITE = (255, 255, 255)
@@ -78,21 +79,7 @@ class Hero (pygame.sprite.Sprite):
             self.rect.y += self.speed_straight
             self.y = self.rect.y
 
-    '''def strike(self):
-        keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_w]:
-            if self.rect_bullet.y > 0:
-                self.rect_bullet.y -= self.strike_speed
-        if keys[pygame.K_s]:
-            if self.rect_bullet.y < H:
-                self.rect_bullet.y += self.strike_speed
-        if keys[pygame.K_a]:
-            if self.rect_bullet.x > 0:
-                self.rect_bullet.x -= self.strike_speed
-        if keys[pygame.K_d]:
-            if self.rect_bullet.x < W:
-                self.rect_bullet.x += self.strike_speed'''
 
 MOVE_W = False
 MOVE_S = False
@@ -241,9 +228,9 @@ background_rect_5 = background_surf_5.get_rect(topleft=(0, 0))
 sc.blit(background_surf, background_rect)
 
 
-
 hero1 = Hero(W/2, H/2, 'hero.png', 100)
-
+#MONSTERS = pygame.sprite.Group()
+#MONSTERS.add (Monsters(randint(1,W-90), 90, 'monster1.png', 100))
 monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100)
 
 bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SKIN)
@@ -277,18 +264,48 @@ rect_2 = pygame.Rect((W/2-150, H/2 + 150, 0, 0))
 sc.blit(surf2, rect_2)
 
 MENU_NAMESPACE_2 = pygame.font.Font(None,80)
-MENU_TEXT_2 = MENU_NAMESPACE_2.render ('START', 1, (0, 0,0))
-MENU_PLACE_2 = MENU_TEXT_2.get_rect(center =(150, 50))
+MENU_TEXT_2 = MENU_NAMESPACE_2.render('START', 1, (0, 0,0))
+MENU_PLACE_2 = MENU_TEXT_2.get_rect(center=(150, 50))
 sc.blit (MENU_TEXT_2,MENU_PLACE_2)
+
+surf_death = pygame.Surface((500, 100))
+surf_death.fill ((250, 250, 250))
+rect_DEATH = pygame.Rect((W/2-250, H/2 - 150, 0, 0))
+sc.blit(surf_death, rect_DEATH)
+
+DEATH_NAMESPACE = pygame.font.Font(None, 80)
+DEATH_TEXT = DEATH_NAMESPACE.render('YOU ARE DEAD', 1, (0, 0,0))
+DEATH_PLACE = DEATH_TEXT.get_rect(center=(250, 50))
+sc.blit(DEATH_TEXT, DEATH_PLACE)
+
+surf3 = pygame.Surface((200, 80))
+surf3.fill((250, 250, 250))
+rect_3 = pygame.Rect((W/2-100, H/2 + 150, 0, 0))
+sc.blit(surf3, rect_3)
+
+MENU_NAMESPACE_3 = pygame.font.Font(None, 60)
+MENU_TEXT_3 = MENU_NAMESPACE_3.render('Try again', 1, (0, 0,0))
+MENU_PLACE_3 = MENU_TEXT_3.get_rect(center =(100, 50))
+
 while 1:
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             exit()
         if MENU_STATUS == True:
-            if i.type == pygame.MOUSEBUTTONDOWN:
-                if i.button == 1 and i.pos[0] in range(int(W/2 - 150), int(W/2 + 150) ) \
-                        and i.pos[1] in range(int(H/2 + 150), int(H/2 + 250)):
-                    MENU_STATUS = False
+            if hero1.hp > 0:
+                if i.type == pygame.MOUSEBUTTONDOWN:
+                    if i.button == 1 and i.pos[0] in range(int(W/2 - 150), int(W/2 + 150) ) \
+                            and i.pos[1] in range(int(H/2 + 150), int(H/2 + 250)):
+                        MENU_STATUS = False
+            if hero1.hp <= 0:
+                if i.type == pygame.MOUSEBUTTONDOWN:
+                    if i.button == 1 and i.pos[0] in range(int(W/2 - 100), int(W/2 + 100) ) \
+                            and i.pos[1] in range(int(H/2 + 150), int(H/2 + 230)):
+                        hero1.hp = 100
+                        monster1.hp = 100
+                        monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', 100)
+                        MENU_STATUS = False
+
 
         elif i.type == pygame.KEYUP:
             if i.key == pygame.K_1:
@@ -310,13 +327,25 @@ while 1:
                 sound2.play()
     keys = pygame.key.get_pressed()
     if MENU_STATUS == True:
-        sc.blit(background_surf, background_rect)
-        sc.blit(surf1, rect_1)
-        surf1.blit(MENU_TEXT_1, MENU_PLACE_1)
-        sc.blit(surf2, rect_2)
-        surf2.blit(MENU_TEXT_2, MENU_PLACE_2)
-        pygame.time.delay(40)
-        pygame.display.update()
+        if hero1.hp > 0:
+            sc.blit(background_surf, background_rect)
+            sc.blit(surf1, rect_1)
+            surf1.blit(MENU_TEXT_1, MENU_PLACE_1)
+            sc.blit(surf2, rect_2)
+            surf2.blit(MENU_TEXT_2, MENU_PLACE_2)
+            pygame.time.delay(40)
+            pygame.display.update()
+        if hero1.hp <= 0:
+            sc.blit(background_surf_5, background_rect_5)
+            sc.blit(surf_death, rect_DEATH)
+            surf_death.blit(DEATH_TEXT, DEATH_PLACE)
+
+            sc.blit(surf3, rect_3)
+            surf3.blit(MENU_TEXT_3, MENU_PLACE_3)
+
+            pygame.time.delay(40)
+            pygame.display.update()
+
     if MENU_STATUS == False:
         if hero1.hp >= 100:
             sc.blit(background_surf, background_rect)
@@ -336,6 +365,8 @@ while 1:
         elif hero1.hp <= 15:
             sc.blit(background_surf_5, background_rect_5)
             sc.blit(hero1.image, hero1.rect)
+        if hero1.hp <= 0:
+            MENU_STATUS = True
         sc.blit(hero1.image, hero1.rect)
         if keys[pygame.K_w]:
             bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
