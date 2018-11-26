@@ -15,8 +15,8 @@ random.shuffle([MUSIC])
 pygame.mixer.music.load(MUSIC)
 pygame.mixer.music.play(-1)
 
-sound1 = pygame.mixer.Sound('frog.wav')
-sound2 = pygame.mixer.Sound('Грустный тромбон.ogg')
+sound1 = pygame.mixer.Sound('udar1.wav')
+sound2 = pygame.mixer.Sound('udar_hero.wav')
 
 
 class Hero (pygame.sprite.Sprite):
@@ -113,6 +113,7 @@ class Bullet (Hero):
             self.kill()
             MOVE_W = False
             monster1.hp -= 25
+            sound2.play()
 
     def move_s(self):
         if self.rect_bullet.y < H-90:
@@ -126,6 +127,7 @@ class Bullet (Hero):
             self.kill()
             MOVE_S = False
             monster1.hp -= 25
+            sound2.play()
     def move_a(self):
         if self.rect_bullet.x > 90:
             self.rect_bullet.x -= self.strike_speed
@@ -138,6 +140,7 @@ class Bullet (Hero):
             self.kill()
             MOVE_A = False
             monster1.hp -= 25
+            sound2.play()
 
     def move_d(self):
         if self.rect_bullet.x < W-90:
@@ -151,6 +154,7 @@ class Bullet (Hero):
             self.kill()
             MOVE_D = False
             monster1.hp -= 25
+            sound2.play()
 
 
 class Monsters (Hero):
@@ -198,6 +202,7 @@ class Monsters (Hero):
             MONSTER_STATUS = False
     def attack(self):
         hero1.hp -= 1
+        sound1.play()
 
 FREE_BULLETS = True
 MONSTER_STATUS = True
@@ -306,8 +311,7 @@ while 1:
                         monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', 100)
                         MENU_STATUS = False
 
-
-        elif i.type == pygame.KEYUP:
+        if i.type == pygame.KEYUP:
             if i.key == pygame.K_1:
                 pygame.mixer.music.pause()
                 #в этом случае музыка будет начинаться сначала
@@ -315,16 +319,14 @@ while 1:
             elif i.key == pygame.K_2:
                 pygame.mixer.music.unpause()
                 # pygame.mixer.music.play()
-                pygame.mixer.music.set_volume(0.5)
+                pygame.mixer.music.set_volume(0.3)
             elif i.key == pygame.K_3:
                 pygame.mixer.music.unpause()
                 # pygame.mixer.music.play()
                 pygame.mixer.music.set_volume(1)
-        elif i.type == pygame.MOUSEBUTTONUP:
-            if i.button == 1:
-                sound1.play()
-            elif i.button == 3:
-                sound2.play()
+
+
+
     keys = pygame.key.get_pressed()
     if MENU_STATUS == True:
         if hero1.hp > 0:
@@ -425,7 +427,7 @@ while 1:
                 monster1.attack()
         '''print(hero1.x, hero1.y)
         print(monster1.x, monster1.y)'''
-        print (MOVE_W)
-        print (bullet1.rect_bullet.y)
-        print (FREE_BULLETS)
-        print (monster1)
+        print(MOVE_W)
+        print(bullet1.rect_bullet.y)
+        print(FREE_BULLETS)
+        print(monster1)
