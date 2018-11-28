@@ -79,7 +79,10 @@ class Hero (pygame.sprite.Sprite):
             self.rect.y += self.speed_straight
             self.y = self.rect.y
 
-
+global MOVE_S
+global MOVE_W
+global MOVE_A
+global MOVE_D
 
 MOVE_W = False
 MOVE_S = False
@@ -89,73 +92,79 @@ dop_hp = 0
 dop_speed = 0
 
 class Bullet (Hero):
-    def __init__(self, x, y, filename):
+    def __init__(self, x, y, surf, group):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(filename).convert()
-        # прячем фон белого цвета
-        self.image.set_colorkey((255, 255, 255))
-        self.rect_bullet = self.image.get_rect(center=(x, y))
+        self.image = surf
+        self.rect = self.image.get_rect(center=(x, y))
+        self.add(group)
         self.strike_speed = 10
 
     def update(self, x, y):
-        global bullet1
-        bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF)
+        global MOVE_A
+        global MOVE_W
+        global MOVE_S
+        global MOVE_D
 
+        if MOVE_W == False and MOVE_A == False and MOVE_S == False and MOVE_D == False:
+            self.kill()
+            Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF[0], BULLETS)
 
-    def move_w(self):
-        if self.rect_bullet.y > 90:
-            self.rect_bullet.y -= self.strike_speed
-        if self.rect_bullet.y <= 90 or keys[pygame.K_d] or keys[pygame.K_a] or keys[pygame.K_s]:
-            self.kill()
-            global MOVE_W
-            MOVE_W = False
-        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
-            self.kill()
-            MOVE_W = False
-            monster1.hp -= 25
-            sound2.play()
+        if MOVE_W == True:
+            if self.rect.y > 90:
+                self.rect.y -= self.strike_speed
+            if self.rect.y <= 90 or keys[pygame.K_d] or keys[pygame.K_a] or keys[pygame.K_s]:
+                self.kill()
+                MOVE_W = False
+            if MONSTER_STATUS == True and (
+                    self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                    and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+                self.kill()
+                MOVE_W = False
+                monster1.hp -= 25
+                sound2.play()
 
-    def move_s(self):
-        if self.rect_bullet.y < H-90:
-            self.rect_bullet.y += self.strike_speed
-        if self.rect_bullet.y >= H-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_d]:
-            self.kill()
-            global MOVE_S
-            MOVE_S = False
-        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
-            self.kill()
-            MOVE_S = False
-            monster1.hp -= 25
-            sound2.play()
-    def move_a(self):
-        if self.rect_bullet.x > 90:
-            self.rect_bullet.x -= self.strike_speed
-        if self.rect_bullet.x <= 90 or keys[pygame.K_w] or keys[pygame.K_d] or keys[pygame.K_s]:
-            self.kill()
-            global MOVE_A
-            MOVE_A = False
-        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
-            self.kill()
-            MOVE_A = False
-            monster1.hp -= 25
-            sound2.play()
+        if MOVE_S == True:
+            if self.rect.y < H - 90:
+                self.rect.y += self.strike_speed
+            if self.rect.y >= H - 90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_d]:
+                self.kill()
+                MOVE_S = False
+            if MONSTER_STATUS == True and (
+                    self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                    and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+                self.kill()
+                MOVE_S = False
+                monster1.hp -= 25
+                sound2.play()
 
-    def move_d(self):
-        if self.rect_bullet.x < W-90:
-            self.rect_bullet.x += self.strike_speed
-        if self.rect_bullet.x >= W-90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_s]:
-            self.kill()
-            global MOVE_D
-            MOVE_D = False
-        if MONSTER_STATUS == True and (self.rect_bullet.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
-                and self.rect_bullet.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
-            self.kill()
-            MOVE_D = False
-            monster1.hp -= 25
-            sound2.play()
+        if MOVE_A == True:
+            if self.rect.x > 90:
+                self.rect.x -= self.strike_speed
+            if self.rect.x <= 90 or keys[pygame.K_w] or keys[pygame.K_d] or keys[pygame.K_s]:
+                self.kill()
+                MOVE_A = False
+            if MONSTER_STATUS == True and (
+                    self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                    and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+                self.kill()
+                MOVE_A = False
+                monster1.hp -= 25
+                sound2.play()
+
+        if MOVE_D == True:
+            if self.rect.x < W - 90:
+                self.rect.x += self.strike_speed
+            if self.rect.x >= W - 90 or keys[pygame.K_w] or keys[pygame.K_a] or keys[pygame.K_s]:
+                self.kill()
+                MOVE_D = False
+            if MONSTER_STATUS == True and (
+                    self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
+                    and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
+                self.kill()
+                MOVE_D = False
+                monster1.hp -= 25
+                sound2.play()
+
 
 
 class Monsters (Hero):
@@ -208,12 +217,18 @@ class Monsters (Hero):
 FREE_BULLETS = True
 MONSTER_STATUS = True
 
+BULLETS_SKIN = ('circle-color.png' , 'pop.image.png')
+BULLET_SURF = []
 
-BULLET_SURF = 'circle-color.png'
+sc = pygame.display.set_mode((W, H))
+
+
+for i in range(len(BULLETS_SKIN)):
+    BULLET_SURF.append(pygame.image.load(BULLETS_SKIN[i]).convert_alpha())
 FIELD = ['field.png', 'field1.png','field2.png','field3.png','field4.png','field5.png']
 
 
-sc = pygame.display.set_mode((W, H))
+
 background_surf = pygame.image.load(FIELD[0]).convert()
 background_rect = background_surf.get_rect(topleft=(0, 0))
 
@@ -236,11 +251,10 @@ sc.blit(background_surf, background_rect)
 
 hero1 = Hero(W/2, H/2, 'hero.png', 100)
 BULLETS = pygame.sprite.Group()
-#BULLETS.add (Bullet(randint(1,W-90), 90, 'monster1.png', 100))
 monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100, 2)
 
-bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF)
-bullet2 = Bullet (randint(90, W-90), randint(90, H-90), 'pop.image.png')
+Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF[0], BULLETS)
+
 
 
 HP_NAMESPACE = pygame.font.Font(None,30)
@@ -372,36 +386,27 @@ while 1:
             MENU_STATUS = True
         sc.blit(hero1.image, hero1.rect)
         if keys[pygame.K_w]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
+            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0],BULLETS)
             MOVE_W = True
         if keys[pygame.K_s]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
+            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS)
             MOVE_S = True
         if keys[pygame.K_a]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
+            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS)
             MOVE_A = True
         if keys[pygame.K_d]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
+            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS)
             MOVE_D = True
 
-        if MOVE_W == True:
-            bullet1.move_w()
-        if MOVE_S == True:
-            bullet1.move_s()
-        if MOVE_A == True:
-            bullet1.move_a()
-        if MOVE_D == True:
-            bullet1.move_d()
 
-        if MOVE_W == False and MOVE_A == False and MOVE_S == False and MOVE_D == False:
-            bullet1.update(hero1.x + 45, hero1.y + 110)
+        BULLETS.update(hero1.x + 45, hero1.y + 110)
 
-        if hero1.x in range(bullet2.rect_bullet.x - 90, bullet2.rect_bullet.x + 90)\
+        '''if hero1.x in range(bullet2.rect_bullet.x - 90, bullet2.rect_bullet.x + 90)\
         and hero1.y in range(bullet2.rect_bullet.y -120, bullet2.rect_bullet.y +20) :
             BULLET_SURF = 'pop.image.png'
-            FREE_BULLETS = False
+            FREE_BULLETS = False'''
 
-        sc.blit(bullet1.image, bullet1.rect_bullet)
+        BULLETS.draw (sc)
         HP_TEXT = HP_NAMESPACE.render('HP: {}'.format(hero1.hp), 1, (180, 0, 0))
         sc.blit(HP_TEXT, HP_PLACE)
         if MONSTER_STATUS == True:
@@ -410,10 +415,10 @@ while 1:
             sc.blit(HP_MONSTER_TEXT, HP_MONSTER_PLACE)
         if MONSTER_STATUS == False and monster1 == True:
             del monster1
-        if FREE_BULLETS == True:
+        '''if FREE_BULLETS == True:
             sc.blit(bullet2.image, bullet2.rect_bullet)
         else:
-            bullet2 = Bullet(W-40, 40, 'pop.image.png')
+            bullet2 = Bullet(W-40, 40, 'pop.image.png')'''
         if MONSTER_STATUS == True:
             sc.blit(monster1.image, monster1.rect_monster)
 
@@ -432,9 +437,3 @@ while 1:
             monster1.hp += 100
             monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 2 + dop_speed)
             MONSTER_STATUS = True
-        '''print(hero1.x, hero1.y)
-        print(monster1.x, monster1.y)'''
-        print(MOVE_W)
-        print(bullet1.rect_bullet.y)
-        print(FREE_BULLETS)
-        print(monster1)
