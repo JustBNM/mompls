@@ -95,6 +95,7 @@ class Bullet (Hero):
     def __init__(self, x, y, surf, group):
         pygame.sprite.Sprite.__init__(self)
         self.image = surf
+        self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect(center=(x, y))
         self.add(group)
         self.strike_speed = 10
@@ -217,14 +218,21 @@ class Monsters (Hero):
 FREE_BULLETS = True
 MONSTER_STATUS = True
 
-BULLETS_SKIN = ('circle-color.png' , 'pop.image.png')
+sc = pygame.display.set_mode((W, H))
+
+image1 = pygame.image.load('circle-color.png').convert()
+image1.set_colorkey((255, 255, 255))
+image2 = pygame.image.load('pop.image.png').convert()
+image2.set_colorkey((255, 255, 255))
+
+BULLETS_SKIN = (image1, image2)
 BULLET_SURF = []
 
-sc = pygame.display.set_mode((W, H))
+
 
 
 for i in range(len(BULLETS_SKIN)):
-    BULLET_SURF.append(pygame.image.load(BULLETS_SKIN[i]).convert_alpha())
+    BULLET_SURF.append(BULLETS_SKIN[i])
 FIELD = ['field.png', 'field1.png','field2.png','field3.png','field4.png','field5.png']
 
 
