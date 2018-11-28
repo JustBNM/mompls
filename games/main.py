@@ -3,7 +3,7 @@ import random
 from random import randint
 
 pygame.init()
-#pygame.time.set_timer(pygame.USEREVENT, 10000)
+pygame.time.set_timer(pygame.USEREVENT, 3000)
 W = 1072
 H = 634
 WHITE = (255, 255, 255)
@@ -85,7 +85,8 @@ MOVE_W = False
 MOVE_S = False
 MOVE_A = False
 MOVE_D = False
-
+dop_hp = 0
+dop_speed = 0
 
 class Bullet (Hero):
     def __init__(self, x, y, filename):
@@ -158,13 +159,13 @@ class Bullet (Hero):
 
 
 class Monsters (Hero):
-    def __init__(self, x, y, filename, hp):
+    def __init__(self, x, y, filename, hp, speed):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(filename).convert()
         # прячем фон белого цвета
         self.image.set_colorkey((255, 255, 255))
         self.rect_monster = self.image.get_rect(center=(x, y))
-        self.speed = 2
+        self.speed = speed
         self.x = self.rect_monster.x
         self.y = self.rect_monster.y
         self.hp = hp
@@ -236,7 +237,7 @@ sc.blit(background_surf, background_rect)
 hero1 = Hero(W/2, H/2, 'hero.png', 100)
 #MONSTERS = pygame.sprite.Group()
 #MONSTERS.add (Monsters(randint(1,W-90), 90, 'monster1.png', 100))
-monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100)
+monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100, 2)
 
 bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SKIN)
 bullet2 = Bullet (randint(90, W-90), randint(90, H-90), 'pop.image.png')
@@ -248,7 +249,7 @@ HP_PLACE = HP_TEXT.get_rect(center =(50, 20))
 sc.blit(HP_TEXT, HP_PLACE)
 
 HP_MONSTER_NAMESPACE = pygame.font.Font(None,13)
-HP_MONSTER_TEXT = HP_NAMESPACE.render ('{}/100'.format(hero1.hp), 1, (0, 100,0))
+HP_MONSTER_TEXT = HP_NAMESPACE.render ('{}/{}'.format(hero1.hp, 100+dop_hp), 1, (0, 100,0))
 HP_MONSTER_PLACE = HP_MONSTER_TEXT.get_rect(center =(monster1.x + 30, monster1.y - 10))
 sc.blit (HP_MONSTER_TEXT, HP_MONSTER_PLACE)
 
@@ -404,7 +405,7 @@ while 1:
         HP_TEXT = HP_NAMESPACE.render('HP: {}'.format(hero1.hp), 1, (180, 0, 0))
         sc.blit(HP_TEXT, HP_PLACE)
         if MONSTER_STATUS == True:
-            HP_MONSTER_TEXT = HP_NAMESPACE.render('{}/100'.format(monster1.hp), 1, (0, 100, 0))
+            HP_MONSTER_TEXT = HP_NAMESPACE.render('{}/{}'.format(monster1.hp, 100+dop_hp), 1, (0, 100, 0))
             HP_MONSTER_PLACE = HP_MONSTER_TEXT.get_rect(center=(monster1.x + 30, monster1.y - 10))
             sc.blit(HP_MONSTER_TEXT, HP_MONSTER_PLACE)
         if MONSTER_STATUS == False and monster1 == True:
@@ -425,6 +426,12 @@ while 1:
         if MONSTER_STATUS == True:
             if monster1.x in range (hero1.x-30, hero1.x +70) and monster1.y in range (hero1.y - 60, hero1.y +80):
                 monster1.attack()
+        if MONSTER_STATUS == False:
+            dop_hp += 25
+            dop_speed += 1
+            monster1.hp += 100
+            monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 2 + dop_speed)
+            MONSTER_STATUS = True
         '''print(hero1.x, hero1.y)
         print(monster1.x, monster1.y)'''
         print(MOVE_W)
