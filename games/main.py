@@ -99,7 +99,7 @@ class Bullet (Hero):
 
     def update(self, x, y):
         global bullet1
-        bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SKIN)
+        bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF)
 
 
     def move_w(self):
@@ -208,8 +208,8 @@ class Monsters (Hero):
 FREE_BULLETS = True
 MONSTER_STATUS = True
 
-BULLETS_SURF = []
-BULLET_SKIN = 'circle-color.png'
+
+BULLET_SURF = 'circle-color.png'
 FIELD = ['field.png', 'field1.png','field2.png','field3.png','field4.png','field5.png']
 
 
@@ -235,11 +235,11 @@ sc.blit(background_surf, background_rect)
 
 
 hero1 = Hero(W/2, H/2, 'hero.png', 100)
-#MONSTERS = pygame.sprite.Group()
-#MONSTERS.add (Monsters(randint(1,W-90), 90, 'monster1.png', 100))
+BULLETS = pygame.sprite.Group()
+#BULLETS.add (Bullet(randint(1,W-90), 90, 'monster1.png', 100))
 monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100, 2)
 
-bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SKIN)
+bullet1 = Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF)
 bullet2 = Bullet (randint(90, W-90), randint(90, H-90), 'pop.image.png')
 
 
@@ -309,7 +309,7 @@ while 1:
                             and i.pos[1] in range(int(H/2 + 150), int(H/2 + 230)):
                         hero1.hp = 100
                         monster1.hp = 100
-                        monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', 100)
+                        monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', 100, 2)
                         MENU_STATUS = False
 
         if i.type == pygame.KEYUP:
@@ -372,16 +372,16 @@ while 1:
             MENU_STATUS = True
         sc.blit(hero1.image, hero1.rect)
         if keys[pygame.K_w]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
             MOVE_W = True
         if keys[pygame.K_s]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
             MOVE_S = True
         if keys[pygame.K_a]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
             MOVE_A = True
         if keys[pygame.K_d]:
-            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SKIN)
+            bullet1 = Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF)
             MOVE_D = True
 
         if MOVE_W == True:
@@ -398,7 +398,7 @@ while 1:
 
         if hero1.x in range(bullet2.rect_bullet.x - 90, bullet2.rect_bullet.x + 90)\
         and hero1.y in range(bullet2.rect_bullet.y -120, bullet2.rect_bullet.y +20) :
-            BULLET_SKIN = 'pop.image.png'
+            BULLET_SURF = 'pop.image.png'
             FREE_BULLETS = False
 
         sc.blit(bullet1.image, bullet1.rect_bullet)
