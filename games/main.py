@@ -3,7 +3,7 @@ import random
 from random import randint
 
 pygame.init()
-pygame.time.set_timer(pygame.USEREVENT, 3000)
+pygame.time.set_timer(pygame.USEREVENT, 400)
 W = 1072
 H = 634
 WHITE = (255, 255, 255)
@@ -11,7 +11,6 @@ WHITE = (255, 255, 255)
 keys = pygame.key.get_pressed()
 MUSIC = ('background_music.mp3')
 random.shuffle([MUSIC])
-#TODO: Прописать, чтобы можно было листать музыку клавишей.
 pygame.mixer.music.load(MUSIC)
 pygame.mixer.music.play(-1)
 
@@ -20,10 +19,9 @@ sound2 = pygame.mixer.Sound('udar_hero.wav')
 
 
 class Hero (pygame.sprite.Sprite):
-    def __init__(self, x, y, filename, hp):
+    def __init__(self, x, y, filename, hp, damage):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(filename).convert()
-        # прячем фон белого цвета
         self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect(center=(x, y))
         self.speed_straight = 7
@@ -31,6 +29,7 @@ class Hero (pygame.sprite.Sprite):
         self.x = self.rect.x
         self.y = self.rect.y
         self.hp = hp
+        self.damage = damage
 
     def update(self, x, y):
         keys = pygame.key.get_pressed()
@@ -56,14 +55,14 @@ class Hero (pygame.sprite.Sprite):
 
         if keys[pygame.K_RIGHT] == 1:
             if keys[pygame.K_UP] == 1:
-                if self.rect.x < W -190:
+                if self.rect.x < W - 190:
                     self.rect.x += self.speed_diagonal
                     self.x = self.rect.x
                 if self.rect.y > 90:
                     self.rect.y -= self.speed_diagonal
                     self.y = self.rect.y
             if keys[pygame.K_DOWN] == 1:
-                if self.rect.x < W- 190:
+                if self.rect.x < W - 190:
                     self.rect.x += self.speed_diagonal
                     self.x = self.rect.x
                 if self.rect.y < H-190:
@@ -79,8 +78,11 @@ class Hero (pygame.sprite.Sprite):
             self.rect.y += self.speed_straight
             self.y = self.rect.y
 
+
 dop_hp = 0
 dop_speed = 0
+SHOT_READY = True
+
 
 class Bullet (Hero):
     def __init__(self, x, y, surf, group, speed_x, speed_y):
@@ -106,7 +108,7 @@ class Bullet (Hero):
                     self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                     and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
                 self.kill()
-                monster1.hp -= 25
+                monster1.hp -= hero1.damage
                 sound2.play()
 
         if self.speed_y < 0:
@@ -118,7 +120,7 @@ class Bullet (Hero):
                     self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                     and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
                 self.kill()
-                monster1.hp -= 25
+                monster1.hp -= hero1.damage
                 sound2.play()
 
         if self.speed_x < 0:
@@ -130,7 +132,7 @@ class Bullet (Hero):
                     self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                     and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
                 self.kill()
-                monster1.hp -= 25
+                monster1.hp -= hero1.damage
                 sound2.play()
 
         if self.speed_x > 0:
@@ -142,16 +144,14 @@ class Bullet (Hero):
                     self.rect.x in range(monster1.rect_monster.x - 30, monster1.rect_monster.x + 30)
                     and self.rect.y in range(monster1.rect_monster.y - 30, monster1.rect_monster.y + 70)):
                 self.kill()
-                monster1.hp -= 25
+                monster1.hp -= hero1.damage
                 sound2.play()
-
 
 
 class Monsters (Hero):
     def __init__(self, x, y, filename, hp, speed):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(filename).convert()
-        # прячем фон белого цвета
         self.image.set_colorkey((255, 255, 255))
         self.rect_monster = self.image.get_rect(center=(x, y))
         self.speed = speed
@@ -213,7 +213,7 @@ BULLET_SURF = []
 
 for i in range(len(BULLETS_SKIN)):
     BULLET_SURF.append(BULLETS_SKIN[i])
-FIELD = ['field.png', 'field1.png','field2.png','field3.png','field4.png','field5.png']
+FIELD = ['field.png', 'field1.png', 'field2.png', 'field3.png', 'field4.png', 'field5.png']
 
 background_surf = pygame.image.load(FIELD[0]).convert()
 background_rect = background_surf.get_rect(topleft=(0, 0))
@@ -235,12 +235,11 @@ background_rect_5 = background_surf_5.get_rect(topleft=(0, 0))
 sc.blit(background_surf, background_rect)
 
 
-hero1 = Hero(W/2, H/2, 'hero.png', 100)
+hero1 = Hero(W/2, H/2, 'hero.png', 100, randint(20, 30))
 BULLETS = pygame.sprite.Group()
 monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100, 2)
 
 Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, 0)
-
 
 
 HP_NAMESPACE = pygame.font.Font(None,30)
@@ -249,8 +248,8 @@ HP_PLACE = HP_TEXT.get_rect(center =(50, 20))
 sc.blit(HP_TEXT, HP_PLACE)
 
 HP_MONSTER_NAMESPACE = pygame.font.Font(None,13)
-HP_MONSTER_TEXT = HP_NAMESPACE.render ('{}/{}'.format(hero1.hp, 100+dop_hp), 1, (0, 100,0))
-HP_MONSTER_PLACE = HP_MONSTER_TEXT.get_rect(center =(monster1.x + 30, monster1.y - 10))
+HP_MONSTER_TEXT = HP_NAMESPACE.render('{}/{}'.format(hero1.hp, 100+dop_hp), 1, (0, 100,0))
+HP_MONSTER_PLACE = HP_MONSTER_TEXT.get_rect(center=(monster1.x + 30, monster1.y - 10))
 sc.blit (HP_MONSTER_TEXT, HP_MONSTER_PLACE)
 
 MENU_STATUS = True
@@ -260,8 +259,8 @@ rect_1 = pygame.Rect((W/2-150, H/2 - 150, 0, 0))
 sc.blit(surf1, rect_1)
 
 MENU_NAMESPACE_1 = pygame.font.Font(None,70)
-MENU_TEXT_1 = MENU_NAMESPACE_1.render ('Hello, sir.', 1, (0, 0,0))
-MENU_PLACE_1 = MENU_TEXT_1.get_rect(center =(150, 50))
+MENU_TEXT_1 = MENU_NAMESPACE_1.render('Hello, sir.', 1, (0, 0,0))
+MENU_PLACE_1 = MENU_TEXT_1.get_rect(center=(150, 50))
 sc.blit (MENU_TEXT_1,MENU_PLACE_1)
 
 surf2 = pygame.Surface((300, 100))
@@ -291,12 +290,14 @@ sc.blit(surf3, rect_3)
 
 MENU_NAMESPACE_3 = pygame.font.Font(None, 60)
 MENU_TEXT_3 = MENU_NAMESPACE_3.render('Try again', 1, (0, 0,0))
-MENU_PLACE_3 = MENU_TEXT_3.get_rect(center =(100, 50))
+MENU_PLACE_3 = MENU_TEXT_3.get_rect(center=(100, 50))
 
 while 1:
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
             exit()
+        elif i.type == pygame.USEREVENT:
+            SHOT_READY = True
         if MENU_STATUS == True:
             if hero1.hp > 0:
                 if i.type == pygame.MOUSEBUTTONDOWN:
@@ -315,15 +316,11 @@ while 1:
         if i.type == pygame.KEYUP:
             if i.key == pygame.K_1:
                 pygame.mixer.music.pause()
-                #в этом случае музыка будет начинаться сначала
-                # pygame.mixer.music.stop()
             elif i.key == pygame.K_2:
                 pygame.mixer.music.unpause()
-                # pygame.mixer.music.play()
                 pygame.mixer.music.set_volume(0.3)
             elif i.key == pygame.K_3:
                 pygame.mixer.music.unpause()
-                # pygame.mixer.music.play()
                 pygame.mixer.music.set_volume(1)
 
 
@@ -370,15 +367,21 @@ while 1:
             sc.blit(hero1.image, hero1.rect)
         if hero1.hp <= 0:
             MENU_STATUS = True
+            dop_hp = 0
+        hero1.damage = randint(20, 30)
         sc.blit(hero1.image, hero1.rect)
-        if keys[pygame.K_w]:
-            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0],BULLETS, 0, -10)
-        if keys[pygame.K_s]:
+        if keys[pygame.K_w] and SHOT_READY == True:
+            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, -10)
+            SHOT_READY = False
+        if keys[pygame.K_s] and SHOT_READY == True:
             Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, 10)
-        if keys[pygame.K_a]:
+            SHOT_READY = False
+        if keys[pygame.K_a] and SHOT_READY == True:
             Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, -10, 0)
-        if keys[pygame.K_d]:
+            SHOT_READY = False
+        if keys[pygame.K_d] and SHOT_READY == True:
             Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, 10, 0)
+            SHOT_READY = False
 
 
         BULLETS.update(hero1.x + 45, hero1.y + 110)
@@ -416,6 +419,6 @@ while 1:
         if MONSTER_STATUS == False:
             dop_hp += 25
             dop_speed += 1
-            monster1.hp += 100
+            monster1.hp = 100
             monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 2 + dop_speed)
             MONSTER_STATUS = True
