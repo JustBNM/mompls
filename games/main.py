@@ -97,7 +97,7 @@ class Bullet (Hero):
     def update(self, x, y):
         if self.speed_x == 0 and self.speed_y == 0:
             self.kill()
-            Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, 0)
+            Bullet(hero1.x + 45, hero1.y + 100, BULLET_SURF[0], BULLETS, 0, 0)
 
         if self.speed_y > 0:
             if self.rect.y > 90:
@@ -148,6 +148,26 @@ class Bullet (Hero):
                 sound2.play()
 
 
+
+class Item (Hero):
+    def __init__(self, x, y, surf, group, type):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = surf
+        self.image.set_colorkey((255, 255, 255))
+        self.rect = self.image.get_rect(center=(x, y))
+        self.type = type
+        self.add(group)
+    def update(self):
+        if self.rect.x in range (hero1.x-10, hero1.x +90) and self.rect.y in range (hero1.y, hero1.y +120):
+            if self.type == 1:
+                hero1.damage += 2
+                hero1.hp += 5
+            if self.type == 0:
+                hero1.speed_straight += 1
+                hero1.speed_diagonal += 1
+            self.kill()
+
+
 class Monsters (Hero):
     def __init__(self, x, y, filename, hp, speed):
         pygame.sprite.Sprite.__init__(self)
@@ -189,6 +209,7 @@ class Monsters (Hero):
                 self.y = self.rect_monster.y
         if self.hp <= 0:
             global MONSTER_STATUS
+            Item(monster1.x, monster1.y, ITEM_SURF[0], ITEMS, 0)
             MONSTER_STATUS = False
     def attack(self):
         hero1.hp -= 1
@@ -205,14 +226,27 @@ image1.set_colorkey((255, 255, 255))
 image2 = pygame.image.load('pop.image.png').convert()
 image2.set_colorkey((255, 255, 255))
 
+crown = pygame.image.load('crown.png').convert()
+crown.set_colorkey((255, 255, 255))
+bread = pygame.image.load('bread.png').convert()
+bread.set_colorkey((255, 255, 255))
+
+
 BULLETS_SKIN = (image1, image2)
 BULLET_SURF = []
+
+ITEM_SKIN = (crown, bread)
+ITEM_SURF = []
 
 
 
 
 for i in range(len(BULLETS_SKIN)):
     BULLET_SURF.append(BULLETS_SKIN[i])
+
+for i in range(len(ITEM_SKIN)):
+    ITEM_SURF.append(ITEM_SKIN[i])
+
 FIELD = ['field.png', 'field1.png', 'field2.png', 'field3.png', 'field4.png', 'field5.png']
 
 background_surf = pygame.image.load(FIELD[0]).convert()
@@ -237,9 +271,14 @@ sc.blit(background_surf, background_rect)
 
 hero1 = Hero(W/2, H/2, 'hero.png', 100, randint(20, 30))
 BULLETS = pygame.sprite.Group()
+
+ITEMS = pygame.sprite.Group()
+tick = 0
+
 monster1 = Monsters(randint(1,W-90), 90, 'monster1.png', 100, 2)
 
-Bullet(hero1.x + 45, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, 0)
+Bullet(hero1.x + 45, hero1.y + 100, BULLET_SURF[0], BULLETS, 0, 0)
+Item(randint(90, W-90), randint(100, H-90), ITEM_SURF[1], ITEMS, 1)
 
 
 HP_NAMESPACE = pygame.font.Font(None,30)
@@ -298,6 +337,7 @@ while 1:
             exit()
         elif i.type == pygame.USEREVENT:
             SHOT_READY = True
+            tick += 1
         if MENU_STATUS == True:
             if hero1.hp > 0:
                 if i.type == pygame.MOUSEBUTTONDOWN:
@@ -370,28 +410,32 @@ while 1:
             dop_hp = 0
         hero1.damage = randint(20, 30)
         sc.blit(hero1.image, hero1.rect)
+
         if keys[pygame.K_w] and SHOT_READY == True:
-            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, -10)
+            Bullet(hero1.x + 40, hero1.y + 100, BULLET_SURF[0], BULLETS, 0, -10)
             SHOT_READY = False
         if keys[pygame.K_s] and SHOT_READY == True:
-            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, 0, 10)
+            Bullet(hero1.x + 40, hero1.y + 100, BULLET_SURF[0], BULLETS, 0, 10)
             SHOT_READY = False
         if keys[pygame.K_a] and SHOT_READY == True:
-            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, -10, 0)
+            Bullet(hero1.x + 40, hero1.y + 100, BULLET_SURF[0], BULLETS, -10, 0)
             SHOT_READY = False
         if keys[pygame.K_d] and SHOT_READY == True:
-            Bullet(hero1.x + 40, hero1.y + 110, BULLET_SURF[0], BULLETS, 10, 0)
+            Bullet(hero1.x + 40, hero1.y + 100, BULLET_SURF[0], BULLETS, 10, 0)
             SHOT_READY = False
 
 
         BULLETS.update(hero1.x + 45, hero1.y + 110)
+        BULLETS.draw(sc)
 
-        '''if hero1.x in range(bullet2.rect_bullet.x - 90, bullet2.rect_bullet.x + 90)\
-        and hero1.y in range(bullet2.rect_bullet.y -120, bullet2.rect_bullet.y +20) :
-            BULLET_SURF = 'pop.image.png'
-            FREE_BULLETS = False'''
+        if tick == 15:
+            Item(randint(90, W-90), randint(100, H-90), ITEM_SURF[1], ITEMS, 1)
+            tick = 0
 
-        BULLETS.draw (sc)
+        ITEMS.update()
+        ITEMS.draw(sc)
+
+
         HP_TEXT = HP_NAMESPACE.render('HP: {}'.format(hero1.hp), 1, (180, 0, 0))
         sc.blit(HP_TEXT, HP_PLACE)
         if MONSTER_STATUS == True:
@@ -400,10 +444,6 @@ while 1:
             sc.blit(HP_MONSTER_TEXT, HP_MONSTER_PLACE)
         if MONSTER_STATUS == False and monster1 == True:
             del monster1
-        '''if FREE_BULLETS == True:
-            sc.blit(bullet2.image, bullet2.rect_bullet)
-        else:
-            bullet2 = Bullet(W-40, 40, 'pop.image.png')'''
         if MONSTER_STATUS == True:
             sc.blit(monster1.image, monster1.rect_monster)
 
@@ -422,3 +462,4 @@ while 1:
             monster1.hp = 100
             monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 2 + dop_speed)
             MONSTER_STATUS = True
+        print( hero1.speed_straight, hero1.speed_diagonal)
