@@ -8,6 +8,8 @@ W = 1072
 H = 634
 WHITE = (255, 255, 255)
 
+speed_tick = 0
+
 keys = pygame.key.get_pressed()
 MUSIC = ('background_music.mp3')
 random.shuffle([MUSIC])
@@ -159,12 +161,16 @@ class Item (Hero):
         self.add(group)
     def update(self):
         if self.rect.x in range (hero1.x-10, hero1.x +90) and self.rect.y in range (hero1.y, hero1.y +120):
+            global speed_tick
             if self.type == 1:
                 hero1.damage += 2
                 hero1.hp += 5
-            if self.type == 0:
+            if self.type == 0 and hero1.speed_straight <= 8:
                 hero1.speed_straight += 1
                 hero1.speed_diagonal += 1
+            if self.type == 0 and hero1.speed_straight > 8 and speed_tick <= 300:
+                pygame.time.set_timer(pygame.USEREVENT, 400 - speed_tick)
+                speed_tick += 15
             self.kill()
 
 
@@ -408,7 +414,7 @@ while 1:
         if hero1.hp <= 0:
             MENU_STATUS = True
             dop_hp = 0
-        hero1.damage = randint(20, 30)
+
         sc.blit(hero1.image, hero1.rect)
 
         if keys[pygame.K_w] and SHOT_READY == True:
@@ -460,6 +466,9 @@ while 1:
             dop_hp += 25
             dop_speed += 1
             monster1.hp = 100
-            monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 2 + dop_speed)
+            if dop_speed <= 4:
+                monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 2 + dop_speed)
+            else:
+                monster1 = Monsters(randint(1, W - 90), 90, 'monster1.png', monster1.hp + dop_hp, 6)
             MONSTER_STATUS = True
         print( hero1.speed_straight, hero1.speed_diagonal)
