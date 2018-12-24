@@ -428,7 +428,7 @@ while 1:
         BULLETS.update(hero1.x + 45, hero1.y + 110)
         BULLETS.draw(sc)
 
-        if tick == 15:
+        if tick == 12:
             Item(randint(90, W-90), randint(100, H-90), ITEM_SURF[1], ITEMS, 1)
             tick = 0
 
