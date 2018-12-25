@@ -172,7 +172,8 @@ class Item (Hero):
                 pygame.time.set_timer(pygame.USEREVENT, 400 - speed_tick)
                 speed_tick += 15
             self.kill()
-
+        if hero1.hp <= 0:
+            self.kill()
 
 class Monsters (Hero):
     def __init__(self, x, y, filename, hp, speed):
@@ -414,6 +415,7 @@ while 1:
         if hero1.hp <= 0:
             MENU_STATUS = True
             dop_hp = 0
+            dop_speed = 0
 
         sc.blit(hero1.image, hero1.rect)
 
